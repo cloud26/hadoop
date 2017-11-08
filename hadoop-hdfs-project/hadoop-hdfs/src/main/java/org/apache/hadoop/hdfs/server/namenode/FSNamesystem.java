@@ -1757,6 +1757,7 @@ public class FSNamesystem implements Namesystem, FSNamesystemMBean,
    * Get block locations within the specified range.
    * @see ClientProtocol#getBlockLocations(String, long, long)
    */
+  // 客户端调用getBlockLocations()时，最终会到这里
   LocatedBlocks getBlockLocations(String clientMachine, String srcArg,
       long offset, long length) throws IOException {
     final String operationName = "open";
@@ -1766,6 +1767,7 @@ public class FSNamesystem implements Namesystem, FSNamesystemMBean,
     readLock();
     try {
       checkOperation(OperationCategory.READ);
+      // 主要代码
       res = FSDirStatAndListingOp.getBlockLocations(
           dir, pc, srcArg, offset, length, true);
       if (isInSafeMode()) {
@@ -1835,6 +1837,7 @@ public class FSNamesystem implements Namesystem, FSNamesystemMBean,
       }
     }
 
+    // 根据网络的拓扑结构对blocks进行排序
     LocatedBlocks blocks = res.blocks;
     if (blocks != null) {
       blockManager.getDatanodeManager().sortLocatedBlocks(

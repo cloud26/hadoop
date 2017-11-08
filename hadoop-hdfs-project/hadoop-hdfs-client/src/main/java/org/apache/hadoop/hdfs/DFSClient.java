@@ -805,6 +805,9 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory,
 
   public LocatedBlocks getLocatedBlocks(String src, long start)
       throws IOException {
+    // dfsClientConf.getPrefetchSize() == conf.getLong(Read.PREFETCH_SIZE_KEY, 10 * defaultBlockSize)
+    // 也就是说默认只读取前prefetchSize个块的地址
+    // 另外，它还会读取文件的最后一个block的地址信息
     return getLocatedBlocks(src, start, dfsClientConf.getPrefetchSize());
   }
 
@@ -812,6 +815,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory,
    * This is just a wrapper around callGetBlockLocations, but non-static so that
    * we can stub it out for tests.
    */
+  // 向namenode获取文件src起点为start的块的信息
   @VisibleForTesting
   public LocatedBlocks getLocatedBlocks(String src, long start, long length)
       throws IOException {
@@ -1111,6 +1115,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory,
    * inner subclass of InputStream that does the right out-of-band
    * work.
    */
+  // 创建输入流，从namenode上获取一个node列表并读取信息
   public DFSInputStream open(String src, int buffersize, boolean verifyChecksum)
       throws IOException {
     checkOpen();

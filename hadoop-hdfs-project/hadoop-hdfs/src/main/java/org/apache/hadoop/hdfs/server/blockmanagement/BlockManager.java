@@ -1040,6 +1040,7 @@ public class BlockManager implements BlockStatsMXBean {
         LOG.debug("blocks = " + java.util.Arrays.asList(blocks));
       }
       final AccessMode mode = needBlockToken? BlockTokenIdentifier.AccessMode.READ: null;
+      // 根据blocks创建locatedBlockList，从offset开始长度为length的节点数目
       final List<LocatedBlock> locatedblocks = createLocatedBlockList(
           blocks, offset, length, Integer.MAX_VALUE, mode);
 

@@ -347,6 +347,7 @@ public class BlockReaderFactory implements ShortCircuitReplicaCreator {
    *         Other IOException
    *             If there was another problem.
    */
+  // 根据条件创建BlockReader，优先读取本地的节点？
   public BlockReader build() throws IOException {
     Preconditions.checkNotNull(configuration);
     Preconditions

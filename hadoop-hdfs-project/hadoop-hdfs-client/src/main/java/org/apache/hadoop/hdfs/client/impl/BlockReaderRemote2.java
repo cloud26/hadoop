@@ -85,6 +85,7 @@ import org.slf4j.LoggerFactory;
  * implementation. It should be renamed to BlockReaderRemote
  * once we are confident in it.
  */
+// 看起来这类是用来跟datanode交互，读取block的
 @InterfaceAudience.Private
 public class BlockReaderRemote2 implements BlockReader {
 

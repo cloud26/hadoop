@@ -316,6 +316,7 @@ public class DFSInputStream extends FSInputStream
       throws IOException {
     LocatedBlocks newInfo = locatedBlocks;
     if (locatedBlocks == null || refresh) {
+      // 从头开始获取文件的block的信息
       newInfo = dfsClient.getLocatedBlocks(src, 0);
     }
     DFSClient.LOG.debug("newInfo = {}", newInfo);
@@ -337,6 +338,7 @@ public class DFSInputStream extends FSInputStream
     if (!locatedBlocks.isLastBlockComplete()) {
       final LocatedBlock last = locatedBlocks.getLastLocatedBlock();
       if (last != null) {
+        // getLocations()获取存储这个block的几个位置，即副本位置
         if (last.getLocations().length == 0) {
           if (last.getBlockSize() == 0) {
             // if the length is zero, then no data has been written to
@@ -375,7 +377,7 @@ public class DFSInputStream extends FSInputStream
         cdp = DFSUtilClient.createClientDatanodeProtocolProxy(datanode,
             dfsClient.getConfiguration(), timeout,
             conf.isConnectToDnViaHostname(), locatedblock);
-
+        // 向datenode获取block的长度
         final long n = cdp.getReplicaVisibleLength(locatedblock.getBlock());
 
         if (n >= 0) {
@@ -563,6 +565,7 @@ public class DFSInputStream extends FSInputStream
 
       if (readOffsetWithinCompleteBlk) {
         //get the blocks of finalized (completed) block range
+        // 获取从offset开始长度为length的完整的块信息
         blocks = getFinalizedBlockRange(offset,
           Math.min(length, lengthOfCompleteBlk - offset));
       } else {
@@ -1497,6 +1500,7 @@ public class DFSInputStream extends FSInputStream
       long bytesToRead = Math.min(remaining, blk.getBlockSize() - targetStart);
       try {
         if (dfsClient.isHedgedReadsEnabled()) {
+          //如果读取一个数据块的操作比较慢，DFSClient Hedged Read将会开启一个从另一个副本的hedged读操作
           hedgedFetchBlockByteRange(blk, targetStart,
               targetStart + bytesToRead - 1, buffer, offset, corruptedBlockMap);
         } else {
