@@ -948,6 +948,7 @@ public class NetworkTopology {
    * @param nodes     Available replicas with the requested data
    * @param activeLen Number of active nodes at the front of the array
    */
+  // 所有的节点按照与reader的距离排序，距离相同的节点是随机排序的。
   public void sortByDistance(Node reader, Node[] nodes, int activeLen) {
     /** Sort weights for the nodes array */
     int[] weights = new int[activeLen];

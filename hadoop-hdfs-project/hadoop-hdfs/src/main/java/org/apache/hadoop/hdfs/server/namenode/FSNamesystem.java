@@ -1767,7 +1767,8 @@ public class FSNamesystem implements Namesystem, FSNamesystemMBean,
     readLock();
     try {
       checkOperation(OperationCategory.READ);
-      // 主要代码
+      // 获取block信息的主要代码
+      // 细节未看
       res = FSDirStatAndListingOp.getBlockLocations(
           dir, pc, srcArg, offset, length, true);
       if (isInSafeMode()) {

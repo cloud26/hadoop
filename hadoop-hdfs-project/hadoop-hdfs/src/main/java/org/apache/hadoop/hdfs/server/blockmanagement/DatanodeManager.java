@@ -394,6 +394,7 @@ public class DatanodeManager {
     for (LocatedBlock b : locatedblocks) {
       DatanodeInfo[] di = b.getLocations();
       // Move decommissioned/stale datanodes to the bottom
+      // 将下线或者过时的datanode放到最后
       Arrays.sort(di, comparator);
       
       int lastActiveIndex = di.length - 1;

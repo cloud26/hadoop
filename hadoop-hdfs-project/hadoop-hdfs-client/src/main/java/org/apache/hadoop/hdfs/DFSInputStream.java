@@ -503,6 +503,7 @@ public class DFSInputStream extends FSInputStream
         // offset to the portion of the last block,
         // which is not known to the name-node yet;
         // getting the last block
+        // 不明...
         blk = locatedBlocks.getLastLocatedBlock();
       }
       else {
@@ -641,6 +642,7 @@ public class DFSInputStream extends FSInputStream
 
       long offsetIntoBlock = target - targetBlock.getStartOffset();
 
+      // 从getBlockAt得到的dn locations list中得到一个dn
       DNAddrPair retval = chooseDataNode(targetBlock, null);
       chosenNode = retval.info;
       InetSocketAddress targetAddr = retval.addr;
@@ -649,6 +651,7 @@ public class DFSInputStream extends FSInputStream
       targetBlock = retval.block;
 
       try {
+        // 根据targetBlock创建相应的blockReader，可能是本地读，也有可能从远程读
         blockReader = getBlockReader(targetBlock, offsetIntoBlock,
             targetBlock.getBlockSize() - offsetIntoBlock, targetAddr,
             storageType, chosenNode);
