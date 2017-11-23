@@ -1606,6 +1606,7 @@ class DataStreamer extends Daemon {
       success = false;
 
       DatanodeInfo[] excluded = getExcludedNodes();
+      // 向namenode commit oldBlock，并且请求创建一个新的block
       lb = locateFollowingBlock(
           excluded.length > 0 ? excluded : null, oldBlock);
       block.setCurrentBlock(lb.getBlock());

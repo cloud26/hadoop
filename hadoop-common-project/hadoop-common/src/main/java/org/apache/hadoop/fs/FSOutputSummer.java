@@ -202,6 +202,7 @@ abstract public class FSOutputSummer extends OutputStream {
   /** Generate checksums for the given data chunks and output chunks & checksums
    * to the underlying output stream.
    */
+  // 上层是write()函数
   private void writeChecksumChunks(byte b[], int off, int len)
   throws IOException {
     sum.calculateChunkedSums(b, off, len, checksum, 0);
