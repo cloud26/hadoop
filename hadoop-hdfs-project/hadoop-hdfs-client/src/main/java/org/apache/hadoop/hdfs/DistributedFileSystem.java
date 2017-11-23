@@ -457,6 +457,7 @@ public class DistributedFileSystem extends FileSystem {
     }.resolve(this, absF);
   }
 
+  // 创建文件
   @Override
   public FSDataOutputStream create(final Path f, final FsPermission permission,
       final EnumSet<CreateFlag> cflags, final int bufferSize,

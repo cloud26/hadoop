@@ -33,6 +33,7 @@ import com.google.common.base.Preconditions;
 /**
  * The Hdfs implementation of {@link FSDataOutputStream}.
  */
+// 客户端调用这个类写数据，底层是DFSOutputStream
 @InterfaceAudience.Public
 @InterfaceStability.Evolving
 public class HdfsDataOutputStream extends FSDataOutputStream {

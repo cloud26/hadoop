@@ -86,6 +86,7 @@ import com.google.common.base.Preconditions;
  * the first datanode in the pipeline.
  *
  ****************************************************************/
+// write方法在FSOutputSummer里面
 @InterfaceAudience.Private
 public class DFSOutputStream extends FSOutputSummer
     implements Syncable, CanSetDropBehind {

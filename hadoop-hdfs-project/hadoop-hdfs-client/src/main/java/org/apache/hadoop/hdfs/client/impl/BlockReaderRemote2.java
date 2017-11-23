@@ -188,6 +188,9 @@ public class BlockReaderRemote2 implements BlockReader {
     return nRead;
   }
 
+  // HDFS在进行block读写的时候是以packet以单位进行的，默认每个packet为64K
+  // 每个packet由若干个chunk组成，默认512Byte
+  // chunk是进行数据校验的基本单位，每个chunk都会生成一个校验和进行存储，默认4Byte
   private void readNextPacket() throws IOException {
     //Read packet headers.
     packetReceiver.receiveNextPacket(in);
@@ -219,6 +222,7 @@ public class BlockReaderRemote2 implements BlockReader {
         // relative to the start of the block, not the start of the file.
         // This is slightly misleading, but preserves the behavior from
         // the older BlockReader.
+        // 检查当前block的checksum是否正确
         checksum.verifyChunkedSums(curDataSlice,
             packetReceiver.getChecksumSlice(),
             filename, curHeader.getOffsetInBlock());

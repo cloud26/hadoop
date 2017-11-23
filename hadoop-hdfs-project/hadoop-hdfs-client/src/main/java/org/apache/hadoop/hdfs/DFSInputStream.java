@@ -693,6 +693,7 @@ public class DFSInputStream extends FSInputStream
       curCachingStrategy = cachingStrategy;
       shortCircuitForbidden = shortCircuitForbidden();
     }
+    // 使用Builder模式创建一个BlockReader
     return new BlockReaderFactory(dfsClient.getConf()).
         setInetSocketAddress(targetAddr).
         setRemotePeerFactory(dfsClient).
@@ -868,6 +869,8 @@ public class DFSInputStream extends FSInputStream
      * since client is idle. If there are other cases of "non-errors" then
      * then a datanode might be retried by setting this to true again.
      */
+    // 如果读取当前节点出现IOException，就会再重试一次该节点，且只会重试一次
+    // 如果检测到ChecksumException，就会把当前节点加入到DeadNodes，进行SeekToNewSource
     boolean retryCurrentNode = true;
 
     while (true) {
@@ -1054,6 +1057,7 @@ public class DFSInputStream extends FSInputStream
           Thread.sleep((long)waitTime);
         } catch (InterruptedException ignored) {
         }
+        // 为啥这个地方要把所有的deadNodes都删了
         deadNodes.clear(); //2nd option is to remove only nodes[blockId]
         openInfo(true);
         block = refreshLocatedBlock(block);
@@ -1641,6 +1645,8 @@ public class DFSInputStream extends FSInputStream
    * a node other than the current node is found, then returns true.
    * If another node could not be found, then returns false.
    */
+  // 这个函数会把当前节点加入到deadNodes，然后再次调用blockSeekTo()
+  // 本质上是调用getBestNodeDNAddrPair()，函数内部会忽略掉deadNodes
   @Override
   public synchronized boolean seekToNewSource(long targetPos) throws IOException {
     if (currentNode == null) {

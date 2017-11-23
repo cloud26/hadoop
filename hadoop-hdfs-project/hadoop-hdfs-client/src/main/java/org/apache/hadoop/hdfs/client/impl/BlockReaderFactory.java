@@ -347,7 +347,7 @@ public class BlockReaderFactory implements ShortCircuitReplicaCreator {
    *         Other IOException
    *             If there was another problem.
    */
-  // 根据条件创建BlockReader，优先读取本地的节点？
+  // 根据条件创建BlockReader，优先读取本地的节点
   public BlockReader build() throws IOException {
     Preconditions.checkNotNull(configuration);
     Preconditions
@@ -359,12 +359,16 @@ public class BlockReaderFactory implements ShortCircuitReplicaCreator {
     final ShortCircuitConf scConf = conf.getShortCircuitConf();
     if (scConf.isShortCircuitLocalReads() && allowShortCircuitLocalReads) {
       if (clientContext.getUseLegacyBlockReaderLocal()) {
+        // Legacy HDFS-2246的解决方案，由DFSClient直接打开对应的文件读取。由于涉及到权限的问题，已经不推荐使用了。
+        // 详细可以看BlockReaderLocalLegacy的类注释
         reader = getLegacyBlockReaderLocal();
         if (reader != null) {
           LOG.trace("{}: returning new legacy block reader local.", this);
           return reader;
         }
       } else {
+        // 使用HDFS-347的解决方案，使用一个叫Unix Domain Socket的技术
+        // ref: http://blog.csdn.net/jewes/article/details/40189263
         reader = getBlockReaderLocal();
         if (reader != null) {
           LOG.trace("{}: returning new block reader local.", this);
@@ -373,6 +377,23 @@ public class BlockReaderFactory implements ShortCircuitReplicaCreator {
       }
     }
     if (scConf.isDomainSocketDataTraffic()) {
+      // 通过Domain Socket进行远程读，但是网上好像说这个就是同一台机器才能用的？
+      //
+      /*
+      if (conf.getShortCircuitConf().isUseLegacyBlockReader()) {
+        return BlockReaderRemote.newBlockReader(fileName,
+                block, token, startOffset, length, conf.getIoBufferSize(),
+                verifyChecksum, clientName, peer, datanode,
+                clientContext.getPeerCache(), cachingStrategy, tracer);
+      } else {
+        return BlockReaderRemote2.newBlockReader(
+                fileName, block, token, startOffset, length,
+                veri
+
+                fyChecksum, clientName, peer, datanode,
+                clientContext.getPeerCache(), cachingStrategy, tracer);
+      }
+      */
       reader = getRemoteBlockReaderFromDomain();
       if (reader != null) {
         LOG.trace("{}: returning new remote block reader using UNIX domain "
